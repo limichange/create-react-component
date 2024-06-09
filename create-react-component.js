@@ -43,28 +43,38 @@ export function createReactComponent(name) {
 }
 
 function getIndex(name) {
-  return `import * from './${name}'`
+  return `export * from './${name}'`
 }
 
 function getComponentHook(name) {
-  return `import React from 'react'
+  return `import { ElementType } from 'react'
 
-export function use${name}() {
-  return {}
+export type UseAvatarProps = {}
+
+export function useAvatar(props: UseAvatarProps) {
+  const {} = props
+
+  const BaseComponent: ElementType = 'div'
+  const baseProps = {}
+
+  return {
+    BaseComponent,
+    baseProps,
+  }
 }
 `
 }
 
 function getComponentStyleHook(name) {
-  return `import { tv } from 'tailwind-variants'
-  
+  return `import { useMemo } from 'react'
+import { tv } from 'tailwind-variants'
+
 export const ${name}Variants = tv({
   slots: {
     base: []
   },
   variants: {
-    size: {
-    }
+    size: {}
   }
 })
 
@@ -88,8 +98,8 @@ function getComponent(name) {
     process.exit(1)
   }
 
-  return `import React from 'react'
-import { use${name} } from './use${name}'
+  return `
+import { se${name} } from './use${name}'
 import { use${name}Style } from './use${name}Style'
 
 export type ${name}Props = Use${name}StyleProps &
@@ -106,9 +116,8 @@ export const ${name}: FC<${name}Props> = (props) => {
 }
 
 function getStory(name) {
-  return `import React from 'react'
-import { Meta, Story } from '@storybook/react'
-import { ${name} } from './${name}'
+  return `import { ${name} } from './${name}'
+import { Meta, StoryObj } from '@storybook/react'
 
 const meta = {
   title: '${name}',
