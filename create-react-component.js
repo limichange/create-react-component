@@ -43,19 +43,27 @@ export function createReactComponent(name) {
 }
 
 function getIndex(name) {
-  return `export * from './${name}'`
+  return `export * from './${name}'
+export * from './use${name}'
+export * from './use${name}Style'
+`
 }
 
 function getComponentHook(name) {
-  return `import { ElementType } from 'react'
+  return `import { ElementType, ReactNode } from 'react'
 
-export type UseAvatarProps = {}
+export type Use${name}Props = {
+  children?: ReactNode
+  as?: ElementType
+}
 
-export function useAvatar(props: UseAvatarProps) {
-  const {} = props
+export function use${name}(props: Use${name}Props) {
+  const { as, ...otherProps } = props
 
-  const BaseComponent: ElementType = 'div'
-  const baseProps = {}
+  const BaseComponent: ElementType = as || 'div'
+  const baseProps = {
+    ...otherProps,
+  }
 
   return {
     BaseComponent,
@@ -71,11 +79,11 @@ import { tv } from 'tailwind-variants'
 
 export const ${name}Variants = tv({
   slots: {
-    base: []
+    base: [],
   },
   variants: {
-    size: {}
-  }
+    size: {},
+  },
 })
 
 export type Use${name}StyleProps = Parameters<typeof ${name}Variants>[0]
@@ -89,6 +97,7 @@ export function use${name}Style(props: Use${name}StyleProps) {
     }
   }, [props])
 }
+
 `
 }
 
@@ -98,9 +107,9 @@ function getComponent(name) {
     process.exit(1)
   }
 
-  return `
-import { se${name} } from './use${name}'
-import { use${name}Style } from './use${name}Style'
+  return `import { Use${name}Props, use${name} } from './use${name}'
+import { Use${name}StyleProps, use${name}Style } from './use${name}Style'
+import { FC, ReactNode } from 'react'
 
 export type ${name}Props = Use${name}StyleProps &
   Use${name}Props & {
@@ -108,11 +117,17 @@ export type ${name}Props = Use${name}StyleProps &
   }
 
 export const ${name}: FC<${name}Props> = (props) => {
-  const { BaseComponent, baseProps } = use${name}()
-  const { baseStyleProps } = use${name}Style()
+  const { children } = props
+  const { BaseComponent, baseProps } = use${name}(props)
+  const { baseStyleProps } = use${name}Style(props)
 
-  return <BaseComponent {...baseStyleProps} {...baseProps}></BaseComponent>
-}`
+  return (
+    <BaseComponent {...baseStyleProps} {...baseProps}>
+      {children}
+    </BaseComponent>
+  )
+}
+`
 }
 
 function getStory(name) {
@@ -123,7 +138,7 @@ const meta = {
   title: '${name}',
   component: ${name},
   tags: ['autodocs'],
-  argTypes: {}
+  argTypes: {},
 } as Meta<typeof ${name}>
 
 export default meta
@@ -133,5 +148,6 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {},
 }
+
 `
 }
