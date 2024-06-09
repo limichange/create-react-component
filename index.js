@@ -12,5 +12,13 @@ program
 
     console.log(`Done, ${options.name}!`)
   })
+  .option('--names <names>', 'Add multiple names')
+  .action((options) => {
+    options.names.split(',').forEach((name) => {
+      createReactComponent(name)
+    })
+
+    console.log(`Done, ${options.names}!`)
+  })
 
 program.parse(process.argv)
