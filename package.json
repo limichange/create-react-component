@@ -1,12 +1,13 @@
 {
-  "name": "create-react-component",
+  "name": "@limichange/create-react-component",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "create-react-component": "./index.js"
+    "create-react-component": "./index.js",
+    "crc": "./index.js"
   },
   "type": "module",
   "keywords": [],
