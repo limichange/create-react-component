@@ -127,6 +127,8 @@ export const ${name}: FC<${name}Props> = (props) => {
     </BaseComponent>
   )
 }
+
+${name}.displayName = '${name}'
 `
 }
 
